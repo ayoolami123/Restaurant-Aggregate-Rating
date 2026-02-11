@@ -1,101 +1,204 @@
-Restaurant Aggregate Rating Prediction
+🍽️ PREDICTING RESTAURANT AGGREGATE RATINGS
 
-Project Overview
+What makes a restaurant highly rated? Is it the price? The number of votes? The location? Or something deeper hidden in the data?
 
-This project applies machine-learning regression techniques to predict restaurants' aggregate ratings using historical restaurant data. 
-Aggregate ratings reflect customer satisfaction and are critical for restaurant recommendation systems, customer decision-making, and restaurant owner performance evaluation.
-The notebook walks through the complete data science pipeline, from data exploration and cleaning to model training, evaluation, and comparison.
+This project applies supervised machine learning to uncover the key drivers. 
 
-Problem Statement
+📌 Project Overview
 
-Given a dataset containing restaurant attributes, the goal is to build a predictive model that can accurately estimate a restaurant’s aggregate rating.
-This is formulated as a supervised regression problem.
+The goal of this project is to predict a restaurant’s aggregate rating using structured features such as location, pricing, votes, cuisines, and service options.
 
-Dataset Description
+Rather than relying on intuition, we use exploratory data analysis (EDA), feature engineering, and multiple regression models to uncover what truly drives restaurant ratings.
 
-The dataset contains multiple features describing restaurants, including operational and rating-related attributes.
+📊 Dataset Summary
 
-Target Variable:
-Aggregate rating (continuous numerical variable)
+•	Initial dataset: 9,551 rows × 21 columns
 
-Feature Types:
-Numerical features
-Categorical features (encoded during preprocessing)
+•	After cleaning: 7,394 rows × 13 columns
 
-Project Workflow
+•	Target variable: Aggregate rating
 
-Library Import
+Feature types:
 
-The project uses standard Python data science libraries: pandas, numpy for data manipulation, matplotlib, seaborn for visualization, scikit-learn for modeling and evaluation
+•	Categorical features (e.g., City, Country Code, Services)
 
-Data Loading and Inspection
+•	Numerical features (e.g., Votes, Average Cost for Two, Price Range)
 
-Dataset is loaded into a Pandas DataFrame
+•	Geographic features (Latitude, Longitude)
 
-Initial inspection includes:
+🔎 Step 1: Exploratory Data Analysis (EDA)
 
-Shape of the dataset
+We began by understanding the structure and quality of the dataset:
 
-Column names and data types
+✅ No duplicate rows
 
-Missing values and inconsistencies
+⚠️ 9 missing values in Cuisines (removed during cleaning)
 
-Exploratory Data Analysis (Initial)
- 
-Summary statistics for numerical variables
+🚨 High-cardinality columns identified (Restaurant ID, Name, Address)
 
-Distribution of the aggregate rating
+Key Insights from EDA
 
-Identification of skewness, outliers, and data quality issues
+•	Most restaurant ratings fall between 3.0 and 3.8
 
-Initial understanding of feature relevance
+•	A spike at 0.0 corresponds to Not Rated restaurants
 
-Data Cleaning and Wrangling
+•	Ratings are approximately bell-shaped after cleaning
 
-This step ensures the dataset is suitable for machine learning:
+•	Higher Votes → more stable and generally higher ratings
 
-Handling missing values
+•	Higher Price Range → moderately higher ratings
 
-Dropping irrelevant or redundant columns
+•	Geographic patterns show India dominates the dataset
 
-Encoding categorical variables
+Correlation analysis revealed moderate relationships between:
 
-Exploratory Data Analysis (Post-Cleaning)
+•	Aggregate Rating and Votes
 
-Validation of cleaning steps
+•	Aggregate Rating and Price Range
 
-Reassessment of distributions and feature relationships
+•	Aggregate Rating and Country Code
 
-Visual confirmation of improved data quality
+Interestingly:
 
-Train–Test Split: The dataset is split into training and testing sets
-   
-Modeling Approach
+Online delivery, Is delivering now and table booking had minimal influence on ratings.
 
-Three regression models were trained and evaluated:
+🧹 Step 2: Data Wrangling & Feature Engineering
 
-Linear Regression
+To improve model performance and reduce noise:
 
-Decision Tree Regressor
+Removed:
 
-Random Forest Regressor
+•	High-cardinality identifiers (Restaurant ID, Name, Address)
 
-Model Evaluation
+•	Leakage features (Rating text, Rating color)
 
-Models were evaluated using standard regression metrics:
+•	Redundant and multicollinearity-prone features (Switch-to-order menu, Locality Verbose, Currency)
 
-R² Score: measures how well the model explains variance in ratings
+Feature Engineering:
 
-Mean Squared Error (MSE) / Root Mean Squared Error (RMSE): measures prediction error
+•	Frequency Encoding for City and Locality
 
-Performance comparison shows that ensemble models outperform simpler models, with Random Forest achieving the best results.
+•	Split and extracted Top 20 Cuisines
 
-Key Insights
+•	Label encoding for binary categorical variables
 
-Data preprocessing significantly improved model performance. 
+•	One-hot encoding for Country Code
 
-Non-linear models performed better than linear regression
+After preprocessing, the dataset was model-ready.
 
-Random Forest provided the most accurate predictions
+🧠 Step 3: Modeling Strategy
 
-Feature selection and cleaning were critical to reducing error
+•	Data Splitting: 80% Training, 20% Testing
+
+•	Additional validation split for tree-based tuning
+
+Baseline Model:
+
+Used mean prediction to establish a benchmark (MAE).
+
+🤖 Models Implemented
+
+1️⃣ Linear Regression
+
+•	Standardized inputs
+
+•	Captures linear relationships
+
+•	Serves as a simple interpretable benchmark
+
+2️⃣ Decision Tree Regressor
+
+•	Captures nonlinear relationships
+
+•	Initially overfit
+
+•	Hyperparameter tuning performed on max_depth
+
+📈 Validation curve showed optimal performance at: max_depth = 4
+
+Tuning significantly improved generalization.
+
+3️⃣ Random Forest Regressor (Best Model 🏆)
+
+•	Reduces variance
+
+•	Captures complex nonlinear interactions
+
+📊 Performance:
+
+R² ≈ 0.62
+
+Lowest RMSE among all models
+
+This model outperformed both Linear Regression and Decision Tree.
+
+🔍 Feature Importance Insights
+
+Top predictive features included:
+
+⭐ Votes	0.4669
+
+⭐ City-Freq 	0.1388
+
+⭐ Longitude	0.0807
+
+⭐ Latitude	0.0698
+
+⭐ Average Cost for Two	0.0528
+
+📈 Interpretation
+
+1️⃣ Social Proof Dominates
+
+•	Nearly 47% of predictive power comes from Votes.
+
+This suggests:
+
+•	Engagement volume strongly stabilizes ratings.
+
+•	Restaurants with more reviews tend to achieve higher and more reliable ratings.
+
+2️⃣ Market Structure Matters
+
+•	City_freq, Latitude, and Longitude collectively contribute ~29% importance.
+
+Ratings are partially shaped by:
+
+•	Geographic clustering
+
+•	Market competitiveness
+
+•	Regional customer behavior
+
+3️⃣ Price Is Secondary
+
+While pricing contributes, it plays a smaller role than engagement and location.
+
+🧠 What This Project Demonstrates
+
+•	Structured EDA workflow
+
+•	Careful leakage prevention
+
+•	Handling high-cardinality categorical variables
+
+•	Nonlinear modeling with ensemble methods
+
+•	Hyperparameter tuning
+
+•	Feature importance interpretation
+
+🎯 Final Insight
+
+Restaurant ratings are not random. They are driven primarily by:
+
+•	Social validation (Votes)
+
+•	Geographic dynamics
+
+•	Market density, and to a lesser extent, pricing signals
+
+This project shows how machine learning can extract structural drivers of customer perception from marketplace data.
+ used for inference:
+
+model = joblib.load("model.pkl")
